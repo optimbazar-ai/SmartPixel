@@ -5,9 +5,13 @@ import { insertContentSchema } from "@shared/schema";
 import OpenAI from "openai";
 import { z } from "zod";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let openai: OpenAI | null = null;
+
+if (process.env.OPENAI_API_KEY) {
+  openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
@@ -95,6 +99,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI Generation routes
   app.post("/api/ai/generate", async (req, res) => {
     try {
+      if (!openai) {
+        return res.status(503).json({ 
+          error: "AI generation is not available. Please configure OPENAI_API_KEY." 
+        });
+      }
+
       const { topic, category, language = 'uz', template = 'blog' } = req.body;
 
       if (!topic) {
