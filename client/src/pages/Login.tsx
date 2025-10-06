@@ -4,20 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
 import { Lock, User, Zap } from "lucide-react";
 
 export default function Login() {
-  const { user, loginMutation, registerMutation } = useAuth();
+  const { user, loginMutation } = useAuth();
   const [, setLocation] = useLocation();
 
   const [loginData, setLoginData] = useState({ username: "", password: "" });
-  const [registerData, setRegisterData] = useState({
-    username: "",
-    password: "",
-    confirmPassword: "",
-  });
 
   useEffect(() => {
     if (user) {
@@ -28,17 +22,6 @@ export default function Login() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     loginMutation.mutate(loginData);
-  };
-
-  const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (registerData.password !== registerData.confirmPassword) {
-      return;
-    }
-    registerMutation.mutate({
-      username: registerData.username,
-      password: registerData.password,
-    });
   };
 
   return (
@@ -54,14 +37,9 @@ export default function Login() {
             </span>
           </div>
 
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="login">Kirish</TabsTrigger>
-              <TabsTrigger value="register">Ro'yxatdan o'tish</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="login">
-              <form onSubmit={handleLogin} className="space-y-4">
+          <div className="w-full">
+            <h2 className="text-2xl font-bold mb-6">Admin Panelga Kirish</h2>
+            <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="login-username">Foydalanuvchi nomi</Label>
                   <div className="relative">
@@ -98,107 +76,25 @@ export default function Login() {
                     />
                   </div>
                 </div>
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={loginMutation.isPending}
-                  data-testid="button-login-submit"
-                >
-                  {loginMutation.isPending ? "Yuklanmoqda..." : "Kirish"}
-                </Button>
-              </form>
-            </TabsContent>
-
-            <TabsContent value="register">
-              <form onSubmit={handleRegister} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="register-username">Foydalanuvchi nomi</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="register-username"
-                      type="text"
-                      placeholder="username"
-                      value={registerData.username}
-                      onChange={(e) =>
-                        setRegisterData({
-                          ...registerData,
-                          username: e.target.value,
-                        })
-                      }
-                      className="pl-10"
-                      required
-                      data-testid="input-register-username"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="register-password">Parol</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="register-password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={registerData.password}
-                      onChange={(e) =>
-                        setRegisterData({
-                          ...registerData,
-                          password: e.target.value,
-                        })
-                      }
-                      className="pl-10"
-                      required
-                      data-testid="input-register-password"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="register-confirm-password">
-                    Parolni tasdiqlash
-                  </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="register-confirm-password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={registerData.confirmPassword}
-                      onChange={(e) =>
-                        setRegisterData({
-                          ...registerData,
-                          confirmPassword: e.target.value,
-                        })
-                      }
-                      className="pl-10"
-                      required
-                      data-testid="input-register-confirm-password"
-                    />
-                  </div>
-                </div>
-                {registerData.password &&
-                  registerData.confirmPassword &&
-                  registerData.password !== registerData.confirmPassword && (
-                    <p className="text-sm text-destructive">
-                      Parollar mos kelmayapti
-                    </p>
-                  )}
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={
-                    registerMutation.isPending ||
-                    registerData.password !== registerData.confirmPassword
-                  }
-                  data-testid="button-register-submit"
-                >
-                  {registerMutation.isPending
-                    ? "Yuklanmoqda..."
-                    : "Ro'yxatdan o'tish"}
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={loginMutation.isPending}
+                data-testid="button-login-submit"
+              >
+                {loginMutation.isPending ? "Yuklanmoqda..." : "Kirish"}
+              </Button>
+            </form>
+            
+            <div className="mt-6 p-4 bg-muted rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                <strong>Default login:</strong><br />
+                Username: admin<br />
+                Password: admin123<br />
+                <span className="text-xs text-destructive">Iltimos, parolni tezda o'zgartiring!</span>
+              </p>
+            </div>
+          </div>
         </Card>
       </div>
 
