@@ -2,21 +2,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
-import { Link, useLocation } from "wouter";
+import { useToast } from "@/hooks/use-toast";
 
 export default function CTASection() {
   const [email, setEmail] = useState("");
-  const [, setLocation] = useLocation();
+  const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Newsletter signup:', email);
+    toast({
+      title: "Muvaffaqiyatli!",
+      description: "Tez orada siz bilan bog'lanamiz.",
+    });
     setEmail("");
-    setLocation('/admin');
   };
 
   return (
-    <section className="py-20 md:py-32">
+    <section id="contact" className="py-20 md:py-32">
       <div className="max-w-4xl mx-auto px-6 text-center">
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
           Bugun Boshlab Ko'ring

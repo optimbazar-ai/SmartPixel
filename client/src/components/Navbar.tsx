@@ -72,11 +72,11 @@ export default function Navbar() {
                 {language === 'uz' ? 'Kirish' : 'Login'}
               </Button>
             </Link>
-            <Link href="/admin">
+            <a href="#contact">
               <Button size="sm" data-testid="button-get-started">
                 {language === 'uz' ? 'Boshlash' : 'Get Started'}
               </Button>
-            </Link>
+            </a>
           </div>
 
           <Button
@@ -122,11 +122,11 @@ export default function Navbar() {
                     {language === 'uz' ? 'Kirish' : 'Login'}
                   </Button>
                 </Link>
-                <Link href="/admin" className="flex-1">
+                <a href="#contact" className="flex-1">
                   <Button size="sm" className="w-full" data-testid="mobile-button-get-started">
                     {language === 'uz' ? 'Boshlash' : 'Get Started'}
                   </Button>
-                </Link>
+                </a>
               </div>
             </div>
           </div>
