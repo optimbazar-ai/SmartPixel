@@ -29,15 +29,15 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export async function initializeDefaultAdmin() {
-  const existingAdmin = await storage.getUserByUsername("admin");
+  const existingAdmin = await storage.getUserByUsername("Akramjon");
   if (!existingAdmin) {
-    const hashedPassword = await hashPassword("admin123");
+    const hashedPassword = await hashPassword("GisoBot201415!");
     await storage.createUser({
-      username: "admin",
+      username: "Akramjon",
       password: hashedPassword,
     });
-    console.log("Default admin user created (username: admin, password: admin123)");
-    console.log("IMPORTANT: Change the default password immediately!");
+    console.log("Default admin user created (username: Akramjon)");
+    console.log("IMPORTANT: Keep your credentials secure!");
   }
 }
 
