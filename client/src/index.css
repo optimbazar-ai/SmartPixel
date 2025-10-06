@@ -265,6 +265,13 @@
  * need to be distinguished from eachother visually.
  */
 @layer utilities {
+  .hyphens-auto {
+    hyphens: auto;
+  }
+  
+  .overflow-wrap-anywhere {
+    overflow-wrap: anywhere;
+  }
 
   /* Hide ugly search cancel button in Chrome until we can style it properly */
   input[type="search"]::-webkit-search-cancel-button {

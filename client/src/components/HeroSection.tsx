@@ -5,7 +5,7 @@ import heroImage from "@assets/generated_images/AI_automation_dashboard_hero_09d
 
 export default function HeroSection() {
   return (
-    <section id="home" className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
+    <section id="home" className="relative min-h-[85vh] flex items-center justify-center overflow-hidden w-full">
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-accent/20" />
         <img 
@@ -16,7 +16,7 @@ export default function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-6 py-12 sm:py-20 text-center">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-3 sm:px-6 py-12 sm:py-20 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8">
           <Sparkles className="w-4 h-4 text-primary" />
           <span className="text-sm font-medium text-primary">
@@ -24,7 +24,7 @@ export default function HeroSection() {
           </span>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text text-transparent leading-tight break-words px-2">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text text-transparent leading-tight break-words overflow-wrap-anywhere hyphens-auto px-2 w-full">
           Kontent yaratish va tarqatishni avtomatlashtiramiz
         </h1>
 
