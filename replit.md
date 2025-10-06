@@ -4,7 +4,7 @@
 
 SmartPixel.uz is a SaaS platform for automated content generation and multi-channel distribution. The platform enables users to create AI-powered content, schedule publications, and automatically distribute to both their website and Telegram channels. It features a bilingual (Uzbek/English) interface with a modern marketing site and a comprehensive admin dashboard for content management.
 
-The application is designed as a full-stack TypeScript solution with a React frontend, Express backend, and PostgreSQL database, emphasizing automation-first workflows and seamless multi-channel publishing.
+The application is designed as a full-stack TypeScript solution with a React frontend, Express backend, and in-memory storage (with PostgreSQL migration path), emphasizing automation-first workflows and seamless multi-channel publishing.
 
 ## User Preferences
 
