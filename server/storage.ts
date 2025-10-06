@@ -1,7 +1,13 @@
 import { type User, type InsertUser, type Content, type InsertContent, type Settings, type InsertSettings, type Portfolio, type InsertPortfolio } from "@shared/schema";
 import { randomUUID } from "crypto";
+import session from "express-session";
+import createMemoryStore from "memorystore";
+
+const MemoryStore = createMemoryStore(session);
 
 export interface IStorage {
+  sessionStore: session.Store;
+
   // User methods
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
@@ -40,12 +46,16 @@ export interface IStorage {
 }
 
 export class MemStorage implements IStorage {
+  sessionStore: session.Store;
   private users: Map<string, User>;
   private contentItems: Map<string, Content>;
   private portfolioItems: Map<string, Portfolio>;
   private settings: Map<string, Settings>;
 
   constructor() {
+    this.sessionStore = new MemoryStore({
+      checkPeriod: 86400000, // 24 hours
+    });
     this.users = new Map();
     this.contentItems = new Map();
     this.portfolioItems = new Map();
