@@ -172,7 +172,7 @@ export class MemStorage implements IStorage {
 
   async getAllPortfolio(): Promise<Portfolio[]> {
     return Array.from(this.portfolioItems.values()).sort(
-      (a, b) => a.order - b.order || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      (a, b) => (a.order || 0) - (b.order || 0) || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }
 
@@ -183,7 +183,7 @@ export class MemStorage implements IStorage {
   async getPublishedPortfolio(): Promise<Portfolio[]> {
     return Array.from(this.portfolioItems.values())
       .filter(p => p.status === 'published')
-      .sort((a, b) => a.order - b.order || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      .sort((a, b) => (a.order || 0) - (b.order || 0) || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
 
   async createPortfolio(insertPortfolio: InsertPortfolio): Promise<Portfolio> {

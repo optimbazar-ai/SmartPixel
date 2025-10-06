@@ -13,6 +13,7 @@ export default function Navbar() {
 
   const navItems = [
     { label: language === 'uz' ? 'Bosh sahifa' : 'Home', href: '/', isRoute: true },
+    { label: language === 'uz' ? 'Portfolio' : 'Portfolio', href: '/portfolio', isRoute: true },
     { label: language === 'uz' ? 'Blog' : 'Blog', href: '/blog', isRoute: true },
     { label: language === 'uz' ? 'Xususiyatlar' : 'Features', href: '#features', isRoute: false },
     { label: language === 'uz' ? 'Qanday ishlaydi' : 'How it works', href: '#workflow', isRoute: false },

@@ -107,8 +107,8 @@ export default function PortfolioManagement() {
       technologies: item.technologies?.join(', ') || "",
       category: item.category || "",
       status: item.status,
-      featured: item.featured,
-      order: item.order,
+      featured: item.featured ?? false,
+      order: item.order ?? 0,
     });
     setIsDialogOpen(true);
   };
