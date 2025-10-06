@@ -7,6 +7,7 @@ import Home from "@/pages/Home";
 import Blog from "@/pages/Blog";
 import BlogPost from "@/pages/BlogPost";
 import Portfolio from "@/pages/Portfolio";
+import Contact from "@/pages/Contact";
 import AdminLayout from "@/pages/admin/AdminLayout";
 import NotFound from "@/pages/not-found";
 
@@ -17,6 +18,7 @@ function Router() {
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:id" component={BlogPost} />
       <Route path="/portfolio" component={Portfolio} />
+      <Route path="/contact" component={Contact} />
       <Route path="/admin/:rest*" component={AdminLayout} />
       <Route path="/admin" component={AdminLayout} />
       <Route component={NotFound} />
