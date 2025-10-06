@@ -2,14 +2,14 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertContentSchema } from "@shared/schema";
-import OpenAI from "openai";
+import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
 
-let openai: OpenAI | null = null;
+let gemini: GoogleGenAI | null = null;
 
-if (process.env.OPENAI_API_KEY) {
-  openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+if (process.env.GEMINI_API_KEY) {
+  gemini = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY,
   });
 }
 
@@ -99,9 +99,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI Generation routes
   app.post("/api/ai/generate", async (req, res) => {
     try {
-      if (!openai) {
+      if (!gemini) {
         return res.status(503).json({ 
-          error: "AI generation is not available. Please configure OPENAI_API_KEY." 
+          error: "AI generation is not available. Please configure GEMINI_API_KEY." 
         });
       }
 
@@ -136,25 +136,18 @@ Maqola:
 - 200-300 so'zdan iborat bo'lishi kerak`,
       };
 
-      const prompt = prompts[template as keyof typeof prompts] || prompts.blog;
+      const systemPrompt = `Siz professional kontent yozuvchisiz. Yuqori sifatli, qiziqarli va foydali kontent yaratasiz.`;
+      const userPrompt = prompts[template as keyof typeof prompts] || prompts.blog;
 
-      const completion = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-            content: `Siz professional kontent yozuvchisiz. Yuqori sifatli, qiziqarli va foydali kontent yaratasiz.`,
-          },
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-        temperature: 0.7,
-        max_tokens: 2000,
+      const response = await gemini.models.generateContent({
+        model: "gemini-2.0-flash-exp",
+        config: {
+          systemInstruction: systemPrompt,
+        },
+        contents: userPrompt,
       });
 
-      const generatedContent = completion.choices[0]?.message?.content || "";
+      const generatedContent = response.text || "";
       
       // Extract title from the first line or first heading
       const lines = generatedContent.split('\n').filter(line => line.trim());
