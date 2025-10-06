@@ -11,13 +11,4 @@ services:
         generateValue: true
       - key: GEMINI_API_KEY
         sync: false
-      - key: DATABASE_URL
-        fromDatabase:
-          name: smartpixel-db
-          property: connectionString
     autoDeploy: true
-
-databases:
-  - name: smartpixel-db
-    databaseName: smartpixel
-    user: smartpixel

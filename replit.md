@@ -10,6 +10,13 @@ The application is designed as a full-stack TypeScript solution with a React fro
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+### October 2025
+- **PWA Support Added**: Progressive Web App manifest, service worker, and install prompt implemented
+- **Render Deployment**: Configured for deployment to Render.com with render.yaml
+- **Security**: Admin credentials secured, deployment guide updated
+
 ## System Architecture
 
 ### Frontend Architecture
@@ -66,7 +73,8 @@ Preferred communication style: Simple, everyday language.
 
 ### Data Storage
 
-**Database: PostgreSQL (Neon Serverless)**
+**Current Storage: In-Memory (Development)**
+**Future: PostgreSQL (Neon Serverless) for Production**
 
 **Schema Design:**
 
@@ -124,6 +132,14 @@ Preferred communication style: Simple, everyday language.
 - PostCSS with Autoprefixer for CSS processing
 
 **Session Management:**
-- connect-pg-simple for PostgreSQL-backed sessions
-- Secure session storage in database
+- MemoryStore for development (in-memory sessions)
+- connect-pg-simple ready for PostgreSQL-backed sessions in production
 - Cookie-based session handling
+
+**Deployment:**
+- Configured for Render.com deployment via render.yaml
+- PWA-ready with manifest.json and service worker
+- Environment-based configuration (.env.example provided)
+- Build command: `npm install && npm run build`
+- Start command: `npm start`
+- See DEPLOYMENT.md for detailed instructions
