@@ -89,8 +89,8 @@ export default function Login() {
             <div className="mt-6 p-4 bg-muted rounded-lg">
               <p className="text-sm text-muted-foreground">
                 <strong>Default login:</strong><br />
-                Username: admin<br />
-                Password: admin123<br />
+                Username: Akramjon<br />
+                Password: GisoBot201415!<br />
                 <span className="text-xs text-destructive">Iltimos, parolni tezda o'zgartiring!</span>
               </p>
             </div>
