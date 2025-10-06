@@ -1,9 +1,11 @@
-import { type User, type InsertUser, type Content, type InsertContent, type Settings, type InsertSettings, type Portfolio, type InsertPortfolio } from "@shared/schema";
-import { randomUUID } from "crypto";
+import { type User, type InsertUser, type Content, type InsertContent, type Settings, type InsertSettings, type Portfolio, type InsertPortfolio, users, content, settings, portfolio } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
+import connectPgSimple from "connect-pg-simple";
+import { db, pool } from "./db";
+import { eq, and, lte } from "drizzle-orm";
 
-const MemoryStore = createMemoryStore(session);
+const PgSession = connectPgSimple(session);
 
 export interface IStorage {
   sessionStore: session.Store;
@@ -45,26 +47,19 @@ export interface IStorage {
   }>;
 }
 
-export class MemStorage implements IStorage {
+export class DbStorage implements IStorage {
   sessionStore: session.Store;
-  private users: Map<string, User>;
-  private contentItems: Map<string, Content>;
-  private portfolioItems: Map<string, Portfolio>;
-  private settings: Map<string, Settings>;
 
   constructor() {
-    this.sessionStore = new MemoryStore({
-      checkPeriod: 86400000, // 24 hours
+    this.sessionStore = new PgSession({
+      pool,
+      createTableIfMissing: true,
     });
-    this.users = new Map();
-    this.contentItems = new Map();
-    this.portfolioItems = new Map();
-    this.settings = new Map();
     
     this.initializeDefaultSettings();
   }
 
-  private initializeDefaultSettings() {
+  private async initializeDefaultSettings() {
     const defaultSettings = [
       { key: 'telegram_bot_token', value: '' },
       { key: 'telegram_channel_id', value: '' },
@@ -72,188 +67,145 @@ export class MemStorage implements IStorage {
       { key: 'default_category', value: 'Texnologiya' },
     ];
 
-    defaultSettings.forEach(setting => {
-      const id = randomUUID();
-      this.settings.set(setting.key, {
-        id,
-        key: setting.key,
-        value: setting.value,
-        updatedAt: new Date(),
-      });
-    });
+    for (const setting of defaultSettings) {
+      const existing = await this.getSetting(setting.key);
+      if (!existing) {
+        await db.insert(settings).values({
+          key: setting.key,
+          value: setting.value,
+        });
+      }
+    }
   }
 
   async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+    const result = await db.select().from(users).where(eq(users.id, id));
+    return result[0];
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const result = await db.select().from(users).where(eq(users.username, username));
+    return result[0];
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+    const result = await db.insert(users).values(insertUser).returning();
+    return result[0];
   }
 
   async getAllContent(): Promise<Content[]> {
-    return Array.from(this.contentItems.values()).sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+    return await db.select().from(content).orderBy(content.createdAt);
   }
 
   async getContent(id: string): Promise<Content | undefined> {
-    return this.contentItems.get(id);
+    const result = await db.select().from(content).where(eq(content.id, id));
+    return result[0];
   }
 
   async getContentByStatus(status: string): Promise<Content[]> {
-    return Array.from(this.contentItems.values())
-      .filter(content => content.status === status)
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    return await db.select().from(content).where(eq(content.status, status)).orderBy(content.createdAt);
   }
 
   async createContent(insertContent: InsertContent): Promise<Content> {
-    const id = randomUUID();
-    const now = new Date();
-    const content: Content = {
-      id,
-      title: insertContent.title,
-      body: insertContent.body,
-      category: insertContent.category ?? null,
-      status: insertContent.status ?? 'draft',
-      publishedAt: insertContent.status === 'published' ? now : null,
-      scheduledFor: insertContent.scheduledFor ?? null,
-      publishToWebsite: insertContent.publishToWebsite ?? true,
-      publishToTelegram: insertContent.publishToTelegram ?? false,
-      telegramMessageId: null,
-      createdAt: now,
-      updatedAt: now,
-    };
-    this.contentItems.set(id, content);
-    return content;
+    const result = await db.insert(content).values(insertContent).returning();
+    return result[0];
   }
 
   async updateContent(id: string, updates: Partial<InsertContent>): Promise<Content | undefined> {
-    const content = this.contentItems.get(id);
-    if (!content) return undefined;
-
-    const updatedContent: Content = {
-      ...content,
-      ...updates,
-      updatedAt: new Date(),
-    };
-
-    this.contentItems.set(id, updatedContent);
-    return updatedContent;
+    const result = await db.update(content)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(content.id, id))
+      .returning();
+    return result[0];
   }
 
   async deleteContent(id: string): Promise<boolean> {
-    return this.contentItems.delete(id);
+    const result = await db.delete(content).where(eq(content.id, id)).returning();
+    return result.length > 0;
   }
 
   async getScheduledContent(): Promise<Content[]> {
     const now = new Date();
-    return Array.from(this.contentItems.values())
-      .filter(content => 
-        content.status === 'scheduled' && 
-        content.scheduledFor && 
-        new Date(content.scheduledFor) <= now
+    return await db.select()
+      .from(content)
+      .where(
+        and(
+          eq(content.status, 'scheduled'),
+          lte(content.scheduledFor, now)
+        )
       );
   }
 
   async publishContent(id: string): Promise<Content | undefined> {
-    const content = this.contentItems.get(id);
-    if (!content) return undefined;
-
-    const publishedContent: Content = {
-      ...content,
-      status: 'published',
-      publishedAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    this.contentItems.set(id, publishedContent);
-    return publishedContent;
+    const result = await db.update(content)
+      .set({ 
+        status: 'published',
+        publishedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(content.id, id))
+      .returning();
+    return result[0];
   }
 
   async getAllPortfolio(): Promise<Portfolio[]> {
-    return Array.from(this.portfolioItems.values()).sort(
-      (a, b) => (a.order || 0) - (b.order || 0) || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+    return await db.select().from(portfolio).orderBy(portfolio.order, portfolio.createdAt);
   }
 
   async getPortfolio(id: string): Promise<Portfolio | undefined> {
-    return this.portfolioItems.get(id);
+    const result = await db.select().from(portfolio).where(eq(portfolio.id, id));
+    return result[0];
   }
 
   async getPublishedPortfolio(): Promise<Portfolio[]> {
-    return Array.from(this.portfolioItems.values())
-      .filter(p => p.status === 'published')
-      .sort((a, b) => (a.order || 0) - (b.order || 0) || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    return await db.select()
+      .from(portfolio)
+      .where(eq(portfolio.status, 'published'))
+      .orderBy(portfolio.order, portfolio.createdAt);
   }
 
   async createPortfolio(insertPortfolio: InsertPortfolio): Promise<Portfolio> {
-    const id = randomUUID();
-    const now = new Date();
-    const portfolio: Portfolio = {
-      id,
-      title: insertPortfolio.title,
-      description: insertPortfolio.description,
-      imageUrl: insertPortfolio.imageUrl ?? null,
-      projectUrl: insertPortfolio.projectUrl ?? null,
-      githubUrl: insertPortfolio.githubUrl ?? null,
-      technologies: insertPortfolio.technologies ?? null,
-      category: insertPortfolio.category ?? null,
-      featured: insertPortfolio.featured ?? false,
-      status: insertPortfolio.status ?? 'draft',
-      order: insertPortfolio.order ?? 0,
-      createdAt: now,
-      updatedAt: now,
-    };
-    this.portfolioItems.set(id, portfolio);
-    return portfolio;
+    const result = await db.insert(portfolio).values(insertPortfolio).returning();
+    return result[0];
   }
 
   async updatePortfolio(id: string, updates: Partial<InsertPortfolio>): Promise<Portfolio | undefined> {
-    const portfolio = this.portfolioItems.get(id);
-    if (!portfolio) return undefined;
-
-    const updatedPortfolio: Portfolio = {
-      ...portfolio,
-      ...updates,
-      updatedAt: new Date(),
-    };
-
-    this.portfolioItems.set(id, updatedPortfolio);
-    return updatedPortfolio;
+    const result = await db.update(portfolio)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(portfolio.id, id))
+      .returning();
+    return result[0];
   }
 
   async deletePortfolio(id: string): Promise<boolean> {
-    return this.portfolioItems.delete(id);
+    const result = await db.delete(portfolio).where(eq(portfolio.id, id)).returning();
+    return result.length > 0;
   }
 
   async getSetting(key: string): Promise<Settings | undefined> {
-    return this.settings.get(key);
+    const result = await db.select().from(settings).where(eq(settings.key, key));
+    return result[0];
   }
 
   async getAllSettings(): Promise<Settings[]> {
-    return Array.from(this.settings.values());
+    return await db.select().from(settings);
   }
 
   async updateSetting(key: string, value: string): Promise<Settings> {
-    const existing = this.settings.get(key);
-    const setting: Settings = {
-      id: existing?.id || randomUUID(),
-      key,
-      value,
-      updatedAt: new Date(),
-    };
-    this.settings.set(key, setting);
-    return setting;
+    const existing = await this.getSetting(key);
+    
+    if (existing) {
+      const result = await db.update(settings)
+        .set({ value, updatedAt: new Date() })
+        .where(eq(settings.key, key))
+        .returning();
+      return result[0];
+    } else {
+      const result = await db.insert(settings)
+        .values({ key, value })
+        .returning();
+      return result[0];
+    }
   }
 
   async getStats(): Promise<{
@@ -262,7 +214,7 @@ export class MemStorage implements IStorage {
     scheduledContent: number;
     draftContent: number;
   }> {
-    const all = Array.from(this.contentItems.values());
+    const all = await db.select().from(content);
     return {
       totalContent: all.length,
       publishedContent: all.filter(c => c.status === 'published').length,
@@ -272,4 +224,4 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DbStorage();
