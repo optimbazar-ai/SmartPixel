@@ -1,4 +1,4 @@
-import { Home, FileText, Sparkles, Settings, Calendar, BarChart3 } from "lucide-react";
+import { Home, FileText, Sparkles, Settings, Calendar, BarChart3, Briefcase } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -22,6 +22,11 @@ const menuItems = [
     title: "Kontent",
     icon: FileText,
     url: "/admin/content",
+  },
+  {
+    title: "Portfolio",
+    icon: Briefcase,
+    url: "/admin/portfolio",
   },
   {
     title: "AI Generator",

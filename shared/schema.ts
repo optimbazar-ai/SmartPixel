@@ -40,6 +40,22 @@ export const contentStats = pgTable("content_stats", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const portfolio = pgTable("portfolio", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  imageUrl: text("image_url"),
+  projectUrl: text("project_url"),
+  githubUrl: text("github_url"),
+  technologies: text("technologies").array(),
+  category: text("category"),
+  featured: boolean("featured").default(false),
+  status: text("status").notNull().default("draft"),
+  order: integer("order").default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -57,6 +73,12 @@ export const insertSettingsSchema = createInsertSchema(settings).omit({
   updatedAt: true,
 });
 
+export const insertPortfolioSchema = createInsertSchema(portfolio).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 
@@ -67,3 +89,6 @@ export type InsertSettings = z.infer<typeof insertSettingsSchema>;
 export type Settings = typeof settings.$inferSelect;
 
 export type ContentStats = typeof contentStats.$inferSelect;
+
+export type InsertPortfolio = z.infer<typeof insertPortfolioSchema>;
+export type Portfolio = typeof portfolio.$inferSelect;

@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Content, type InsertContent, type Settings, type InsertSettings } from "@shared/schema";
+import { type User, type InsertUser, type Content, type InsertContent, type Settings, type InsertSettings, type Portfolio, type InsertPortfolio } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -17,6 +17,14 @@ export interface IStorage {
   getScheduledContent(): Promise<Content[]>;
   publishContent(id: string): Promise<Content | undefined>;
 
+  // Portfolio methods
+  getAllPortfolio(): Promise<Portfolio[]>;
+  getPortfolio(id: string): Promise<Portfolio | undefined>;
+  getPublishedPortfolio(): Promise<Portfolio[]>;
+  createPortfolio(portfolio: InsertPortfolio): Promise<Portfolio>;
+  updatePortfolio(id: string, portfolio: Partial<InsertPortfolio>): Promise<Portfolio | undefined>;
+  deletePortfolio(id: string): Promise<boolean>;
+
   // Settings methods
   getSetting(key: string): Promise<Settings | undefined>;
   getAllSettings(): Promise<Settings[]>;
@@ -34,11 +42,13 @@ export interface IStorage {
 export class MemStorage implements IStorage {
   private users: Map<string, User>;
   private contentItems: Map<string, Content>;
+  private portfolioItems: Map<string, Portfolio>;
   private settings: Map<string, Settings>;
 
   constructor() {
     this.users = new Map();
     this.contentItems = new Map();
+    this.portfolioItems = new Map();
     this.settings = new Map();
     
     this.initializeDefaultSettings();
@@ -158,6 +168,62 @@ export class MemStorage implements IStorage {
 
     this.contentItems.set(id, publishedContent);
     return publishedContent;
+  }
+
+  async getAllPortfolio(): Promise<Portfolio[]> {
+    return Array.from(this.portfolioItems.values()).sort(
+      (a, b) => a.order - b.order || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }
+
+  async getPortfolio(id: string): Promise<Portfolio | undefined> {
+    return this.portfolioItems.get(id);
+  }
+
+  async getPublishedPortfolio(): Promise<Portfolio[]> {
+    return Array.from(this.portfolioItems.values())
+      .filter(p => p.status === 'published')
+      .sort((a, b) => a.order - b.order || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async createPortfolio(insertPortfolio: InsertPortfolio): Promise<Portfolio> {
+    const id = randomUUID();
+    const now = new Date();
+    const portfolio: Portfolio = {
+      id,
+      title: insertPortfolio.title,
+      description: insertPortfolio.description,
+      imageUrl: insertPortfolio.imageUrl ?? null,
+      projectUrl: insertPortfolio.projectUrl ?? null,
+      githubUrl: insertPortfolio.githubUrl ?? null,
+      technologies: insertPortfolio.technologies ?? null,
+      category: insertPortfolio.category ?? null,
+      featured: insertPortfolio.featured ?? false,
+      status: insertPortfolio.status ?? 'draft',
+      order: insertPortfolio.order ?? 0,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.portfolioItems.set(id, portfolio);
+    return portfolio;
+  }
+
+  async updatePortfolio(id: string, updates: Partial<InsertPortfolio>): Promise<Portfolio | undefined> {
+    const portfolio = this.portfolioItems.get(id);
+    if (!portfolio) return undefined;
+
+    const updatedPortfolio: Portfolio = {
+      ...portfolio,
+      ...updates,
+      updatedAt: new Date(),
+    };
+
+    this.portfolioItems.set(id, updatedPortfolio);
+    return updatedPortfolio;
+  }
+
+  async deletePortfolio(id: string): Promise<boolean> {
+    return this.portfolioItems.delete(id);
   }
 
   async getSetting(key: string): Promise<Settings | undefined> {

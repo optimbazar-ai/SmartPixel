@@ -4,6 +4,7 @@ import { Route, Switch } from "wouter";
 import Dashboard from "./Dashboard";
 import ContentManagement from "./ContentManagement";
 import AIGenerator from "./AIGenerator";
+import PortfolioManagement from "./PortfolioManagement";
 import Settings from "./Settings";
 
 export default function AdminLayout() {
@@ -33,6 +34,7 @@ export default function AdminLayout() {
               <Route path="/admin" component={Dashboard} />
               <Route path="/admin/content" component={ContentManagement} />
               <Route path="/admin/generator" component={AIGenerator} />
+              <Route path="/admin/portfolio" component={PortfolioManagement} />
               <Route path="/admin/settings" component={Settings} />
               <Route path="/admin/schedule" component={Dashboard} />
               <Route path="/admin/stats" component={Dashboard} />

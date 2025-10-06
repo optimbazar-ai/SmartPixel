@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertContentSchema } from "@shared/schema";
+import { insertContentSchema, insertPortfolioSchema } from "@shared/schema";
 import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
 
@@ -178,6 +178,74 @@ Maqola:
       res.json(setting);
     } catch (error) {
       res.status(500).json({ error: "Failed to update setting" });
+    }
+  });
+
+  // Portfolio routes
+  app.get("/api/portfolio", async (_req, res) => {
+    try {
+      const portfolio = await storage.getAllPortfolio();
+      res.json(portfolio);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch portfolio" });
+    }
+  });
+
+  app.get("/api/portfolio/published", async (_req, res) => {
+    try {
+      const portfolio = await storage.getPublishedPortfolio();
+      res.json(portfolio);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch published portfolio" });
+    }
+  });
+
+  app.get("/api/portfolio/:id", async (req, res) => {
+    try {
+      const portfolio = await storage.getPortfolio(req.params.id);
+      if (!portfolio) {
+        return res.status(404).json({ error: "Portfolio not found" });
+      }
+      res.json(portfolio);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch portfolio" });
+    }
+  });
+
+  app.post("/api/portfolio", async (req, res) => {
+    try {
+      const validated = insertPortfolioSchema.parse(req.body);
+      const portfolio = await storage.createPortfolio(validated);
+      res.json(portfolio);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors });
+      }
+      res.status(500).json({ error: "Failed to create portfolio" });
+    }
+  });
+
+  app.patch("/api/portfolio/:id", async (req, res) => {
+    try {
+      const portfolio = await storage.updatePortfolio(req.params.id, req.body);
+      if (!portfolio) {
+        return res.status(404).json({ error: "Portfolio not found" });
+      }
+      res.json(portfolio);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update portfolio" });
+    }
+  });
+
+  app.delete("/api/portfolio/:id", async (req, res) => {
+    try {
+      const success = await storage.deletePortfolio(req.params.id);
+      if (!success) {
+        return res.status(404).json({ error: "Portfolio not found" });
+      }
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete portfolio" });
     }
   });
 
