@@ -12,10 +12,11 @@ export default function Navbar() {
   };
 
   const navItems = [
-    { label: language === 'uz' ? 'Bosh sahifa' : 'Home', href: '#home' },
-    { label: language === 'uz' ? 'Xususiyatlar' : 'Features', href: '#features' },
-    { label: language === 'uz' ? 'Qanday ishlaydi' : 'How it works', href: '#workflow' },
-    { label: language === 'uz' ? 'Narxlar' : 'Pricing', href: '#pricing' },
+    { label: language === 'uz' ? 'Bosh sahifa' : 'Home', href: '/', isRoute: true },
+    { label: language === 'uz' ? 'Blog' : 'Blog', href: '/blog', isRoute: true },
+    { label: language === 'uz' ? 'Xususiyatlar' : 'Features', href: '#features', isRoute: false },
+    { label: language === 'uz' ? 'Qanday ishlaydi' : 'How it works', href: '#workflow', isRoute: false },
+    { label: language === 'uz' ? 'Narxlar' : 'Pricing', href: '#pricing', isRoute: false },
   ];
 
   return (
@@ -33,14 +34,25 @@ export default function Navbar() {
 
           <div className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                data-testid={`link-${item.href.slice(1)}`}
-              >
-                {item.label}
-              </a>
+              item.isRoute ? (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  data-testid={`link-${item.href.replace(/\//g, '') || 'home'}`}
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  data-testid={`link-${item.href.slice(1)}`}
+                >
+                  {item.label}
+                </a>
+              )
             ))}
           </div>
 
@@ -77,15 +89,27 @@ export default function Navbar() {
           <div className="md:hidden py-4 border-t border-border">
             <div className="flex flex-col gap-4">
               {navItems.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={() => setIsOpen(false)}
-                  data-testid={`mobile-link-${item.href.slice(1)}`}
-                >
-                  {item.label}
-                </a>
+                item.isRoute ? (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                    onClick={() => setIsOpen(false)}
+                    data-testid={`mobile-link-${item.href.replace(/\//g, '') || 'home'}`}
+                  >
+                    {item.label}
+                  </Link>
+                ) : (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                    onClick={() => setIsOpen(false)}
+                    data-testid={`mobile-link-${item.href.slice(1)}`}
+                  >
+                    {item.label}
+                  </a>
+                )
               ))}
               <div className="flex gap-2 pt-2">
                 <Button variant="outline" size="sm" className="flex-1" data-testid="mobile-button-login">
