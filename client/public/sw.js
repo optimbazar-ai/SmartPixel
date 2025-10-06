@@ -1,16 +1,19 @@
 const CACHE_NAME = 'smartpixel-v1';
 const urlsToCache = [
   '/',
-  '/index.html',
-  '/src/main.tsx',
-  '/src/index.css'
+  '/index.html'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(urlsToCache))
+      .then((cache) => {
+        return cache.addAll(urlsToCache).catch((err) => {
+          console.error('Cache addAll failed:', err);
+        });
+      })
   );
+  self.skipWaiting();
 });
 
 self.addEventListener('fetch', (event) => {
