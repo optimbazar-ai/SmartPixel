@@ -26,7 +26,7 @@ export default function HeroSection() {
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight px-2 w-full" style={{ wordBreak: 'break-word', overflowWrap: 'break-word', hyphens: 'auto' }}>
           <span className="bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text text-transparent">
-            Biz mijozlarga xizmat ko'rsatamiz, Biz bilan biznesni boshqaruvi oson
+            Biz bilan biznesni boshqaruvi oson
           </span>
         </h1>
 
