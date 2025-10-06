@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "wouter";
 
 export default function CTASection() {
   const [email, setEmail] = useState("");
@@ -27,7 +28,7 @@ export default function CTASection() {
         <p className="text-lg text-muted-foreground mb-8">
           AI yordamida kontent yaratishni avtomatlashtirib, biznesingizni keyingi bosqichga olib chiqing
         </p>
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto mb-12">
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto mb-8">
           <Input 
             type="email" 
             placeholder="Email manzilingiz"
@@ -42,7 +43,13 @@ export default function CTASection() {
             <ArrowRight className="w-4 h-4" />
           </Button>
         </form>
-        <p className="text-sm text-muted-foreground">
+        <Link href="/contact">
+          <Button variant="outline" size="lg" className="gap-2" data-testid="button-full-contact">
+            To'liq aloqa formasi
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+        </Link>
+        <p className="text-sm text-muted-foreground mt-4">
           14 kunlik bepul sinov. Kredit karta talab qilinmaydi.
         </p>
       </div>

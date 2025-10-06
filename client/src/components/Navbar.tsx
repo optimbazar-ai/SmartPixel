@@ -15,6 +15,7 @@ export default function Navbar() {
     { label: language === 'uz' ? 'Bosh sahifa' : 'Home', href: '/', isRoute: true },
     { label: language === 'uz' ? 'Portfolio' : 'Portfolio', href: '/portfolio', isRoute: true },
     { label: language === 'uz' ? 'Blog' : 'Blog', href: '/blog', isRoute: true },
+    { label: language === 'uz' ? 'Aloqa' : 'Contact', href: '/contact', isRoute: true },
     { label: language === 'uz' ? 'Xususiyatlar' : 'Features', href: '#features', isRoute: false },
     { label: language === 'uz' ? 'Qanday ishlaydi' : 'How it works', href: '#workflow', isRoute: false },
     { label: language === 'uz' ? 'Narxlar' : 'Pricing', href: '#pricing', isRoute: false },
@@ -67,16 +68,11 @@ export default function Navbar() {
             >
               <Globe className="w-5 h-5" />
             </Button>
-            <Link href="/admin">
-              <Button variant="outline" size="sm" data-testid="button-login">
-                {language === 'uz' ? 'Kirish' : 'Login'}
-              </Button>
-            </Link>
-            <a href="#contact">
+            <Link href="/contact">
               <Button size="sm" data-testid="button-get-started">
                 {language === 'uz' ? 'Boshlash' : 'Get Started'}
               </Button>
-            </a>
+            </Link>
           </div>
 
           <Button
@@ -117,16 +113,11 @@ export default function Navbar() {
                 )
               ))}
               <div className="flex gap-2 pt-2">
-                <Link href="/admin" className="flex-1">
-                  <Button variant="outline" size="sm" className="w-full" data-testid="mobile-button-login">
-                    {language === 'uz' ? 'Kirish' : 'Login'}
-                  </Button>
-                </Link>
-                <a href="#contact" className="flex-1">
+                <Link href="/contact" className="flex-1">
                   <Button size="sm" className="w-full" data-testid="mobile-button-get-started">
                     {language === 'uz' ? 'Boshlash' : 'Get Started'}
                   </Button>
-                </a>
+                </Link>
               </div>
             </div>
           </div>

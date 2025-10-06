@@ -80,7 +80,7 @@ export default function PricingSection() {
                 <span className="text-4xl font-bold">{plan.price}</span>
                 <span className="text-muted-foreground ml-2">{plan.period}</span>
               </div>
-              <a href="#contact">
+              <Link href="/contact">
                 <Button 
                   className="w-full mb-8" 
                   variant={plan.popular ? "default" : "outline"}
@@ -88,7 +88,7 @@ export default function PricingSection() {
                 >
                   {plan.price === "Shartnoma" ? "Aloqaga chiqish" : "Boshlash"}
                 </Button>
-              </a>
+              </Link>
               <ul className="space-y-3">
                 {plan.features.map((feature, featureIndex) => (
                   <li key={featureIndex} className="flex items-start gap-3">

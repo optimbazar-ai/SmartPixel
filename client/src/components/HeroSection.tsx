@@ -33,7 +33,7 @@ export default function HeroSection() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Link href="/admin">
+          <Link href="/contact">
             <Button size="lg" className="gap-2" data-testid="button-hero-get-started">
               Bepul boshlash
               <ArrowRight className="w-5 h-5" />
