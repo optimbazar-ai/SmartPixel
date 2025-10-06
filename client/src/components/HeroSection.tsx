@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { Link } from "wouter";
 import heroImage from "@assets/generated_images/AI_automation_dashboard_hero_09d92999.png";
 
 export default function HeroSection() {
@@ -32,13 +33,17 @@ export default function HeroSection() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Button size="lg" className="gap-2" data-testid="button-hero-get-started">
-            Bepul boshlash
-            <ArrowRight className="w-5 h-5" />
-          </Button>
-          <Button size="lg" variant="outline" className="gap-2 backdrop-blur-sm bg-background/50" data-testid="button-hero-demo">
-            Demo ko'rish
-          </Button>
+          <Link href="/admin">
+            <Button size="lg" className="gap-2" data-testid="button-hero-get-started">
+              Bepul boshlash
+              <ArrowRight className="w-5 h-5" />
+            </Button>
+          </Link>
+          <Link href="/portfolio">
+            <Button size="lg" variant="outline" className="gap-2 backdrop-blur-sm bg-background/50" data-testid="button-hero-demo">
+              Demo ko'rish
+            </Button>
+          </Link>
         </div>
 
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">

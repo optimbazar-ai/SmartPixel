@@ -67,12 +67,16 @@ export default function Navbar() {
             >
               <Globe className="w-5 h-5" />
             </Button>
-            <Button variant="outline" size="sm" data-testid="button-login">
-              {language === 'uz' ? 'Kirish' : 'Login'}
-            </Button>
-            <Button size="sm" data-testid="button-get-started">
-              {language === 'uz' ? 'Boshlash' : 'Get Started'}
-            </Button>
+            <Link href="/admin">
+              <Button variant="outline" size="sm" data-testid="button-login">
+                {language === 'uz' ? 'Kirish' : 'Login'}
+              </Button>
+            </Link>
+            <Link href="/admin">
+              <Button size="sm" data-testid="button-get-started">
+                {language === 'uz' ? 'Boshlash' : 'Get Started'}
+              </Button>
+            </Link>
           </div>
 
           <Button
@@ -113,12 +117,16 @@ export default function Navbar() {
                 )
               ))}
               <div className="flex gap-2 pt-2">
-                <Button variant="outline" size="sm" className="flex-1" data-testid="mobile-button-login">
-                  {language === 'uz' ? 'Kirish' : 'Login'}
-                </Button>
-                <Button size="sm" className="flex-1" data-testid="mobile-button-get-started">
-                  {language === 'uz' ? 'Boshlash' : 'Get Started'}
-                </Button>
+                <Link href="/admin" className="flex-1">
+                  <Button variant="outline" size="sm" className="w-full" data-testid="mobile-button-login">
+                    {language === 'uz' ? 'Kirish' : 'Login'}
+                  </Button>
+                </Link>
+                <Link href="/admin" className="flex-1">
+                  <Button size="sm" className="w-full" data-testid="mobile-button-get-started">
+                    {language === 'uz' ? 'Boshlash' : 'Get Started'}
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

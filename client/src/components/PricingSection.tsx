@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
+import { Link } from "wouter";
 
 const plans = [
   {
@@ -79,13 +80,15 @@ export default function PricingSection() {
                 <span className="text-4xl font-bold">{plan.price}</span>
                 <span className="text-muted-foreground ml-2">{plan.period}</span>
               </div>
-              <Button 
-                className="w-full mb-8" 
-                variant={plan.popular ? "default" : "outline"}
-                data-testid={`button-select-plan-${index}`}
-              >
-                {plan.price === "Shartnoma" ? "Aloqaga chiqish" : "Boshlash"}
-              </Button>
+              <Link href="/admin">
+                <Button 
+                  className="w-full mb-8" 
+                  variant={plan.popular ? "default" : "outline"}
+                  data-testid={`button-select-plan-${index}`}
+                >
+                  {plan.price === "Shartnoma" ? "Aloqaga chiqish" : "Boshlash"}
+                </Button>
+              </Link>
               <ul className="space-y-3">
                 {plan.features.map((feature, featureIndex) => (
                   <li key={featureIndex} className="flex items-start gap-3">

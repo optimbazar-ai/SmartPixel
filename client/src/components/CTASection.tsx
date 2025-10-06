@@ -2,14 +2,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
+import { Link, useLocation } from "wouter";
 
 export default function CTASection() {
   const [email, setEmail] = useState("");
+  const [, setLocation] = useLocation();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Newsletter signup:', email);
     setEmail("");
+    setLocation('/admin');
   };
 
   return (
